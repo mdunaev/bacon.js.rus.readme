@@ -3,17 +3,16 @@ Bacon.js
 
 <img src="https://raw.github.com/baconjs/bacon.js/master/logo.png" align="right" width="300px" />
 
-A small functional reactive programming lib for JavaScript.
+Небольшая функциональная реактивная библиотека для JavaScript.
 
-Turns your event spaghetti into clean and declarative feng shui bacon, by switching
-from imperative to functional. It's like replacing nested for-loops with functional programming
-concepts like [`map`](#observable-map) and [`filter`](#observable-filter). Stop working on individual events and work with event streams instead.
-Combine your data with [`merge`](#stream-merge) and [`combine`](#observable-combine).
-Then switch to the heavier weapons and wield [`flatMap`](#observable-flatmap) and [`combineTemplate`](#bacon-combinetemplate) like a boss.
+Превратите ваши спагетти событий в чистый и декларативный код, заменой императивного стиля на функциональный.
+Например заменив вложенные циклы for-loop на функциональные [`map`](#observable-map) и [`filter`](#observable-filter). Не используйте индивидуальные события, заменив их потоками событий.
+Комбинируйте данные с помощью [`merge`](#stream-merge) и [`combine`](#observable-combine).
+Затем примените тяжелое вооружение, такое как [`flatMap`](#observable-flatmap) и [`combineTemplate`](#bacon-combinetemplate).
 
 It's the `_` of Events. Too bad the symbol `~` is not allowed in JavaScript.
 
-Here's the stuff.
+Материалы по теме.
 
 - [Homepage](http://baconjs.github.io/)
 - [Source files](https://github.com/baconjs/bacon.js/tree/master/src)
@@ -29,10 +28,9 @@ Here's the stuff.
 - [Stack Overflow](http://stackoverflow.com/questions/tagged/bacon.js) for well-formed questions. Use the "bacon.js" tag.
 - [Gitter](https://gitter.im/baconjs/bacon.js) chat for developers of Bacon.
 
-You can also check out my entertaining (LOL), interactive, solid-ass [slideshow](http://raimohanska.github.com/bacon.js-slides/).
+Развлекательное и интерактивное слайдшоу [slideshow](http://raimohanska.github.com/bacon.js-slides/).
 
-And remember to give me feedback on the bacon! Let me know if you've
-used it. Tell me how it worked for you. What's missing? What's wrong?
+Не забудте отправить обратную связь!
 Please contribute!
 
 [![Build Status](https://travis-ci.org/baconjs/bacon.js.svg?branch=master)](https://travis-ci.org/baconjs/bacon.js)
@@ -41,7 +39,7 @@ Please contribute!
 [![Dependency Status](https://david-dm.org/baconjs/bacon.js.svg)](https://david-dm.org/baconjs/bacon.js)
 [![devDependency Status](https://david-dm.org/baconjs/bacon.js/dev-status.svg)](https://david-dm.org/baconjs/bacon.js#info=devDependencies)
 
-Table of contents
+Содержание:
 =================
 
 - [Bacon.js](#baconjs)
@@ -84,38 +82,35 @@ Table of contents
 - [Sponsors](#sponsors)
 
 
-Install
+Установка
 =======
 
-If you're targeting to [node.js](http://nodejs.org/), you can
+Для npm и node.js [node.js](http://nodejs.org/), вы можете
 
     npm install baconjs
 
-For [bower](https://github.com/twitter/bower) users:
+Для [bower](https://github.com/twitter/bower):
 
     bower install bacon
 
-Both minified and unminified versions available on [cdnjs](https://cdnjs.com/libraries/bacon.js).
+Минифицированная и не минифицированная версия доступна на [cdnjs](https://cdnjs.com/libraries/bacon.js).
 
-Starting from 0.7.45, you can build your own Bacon.js bundle with selected features
-only. See instructions [here](#build).
+Начиная с версии 0.7.45, вы можете собрать свой Bacon.js только с выбранными функциями. Инструкция [тут](#build).
 
-Prefer to drink from the firehose? Download from Github [master](https://raw.github.com/baconjs/bacon.js/master/dist/Bacon.js).
+Предпочитаете пить из пожарного шланга? Скачать с Github [master](https://raw.github.com/baconjs/bacon.js/master/dist/Bacon.js).
 
-Visual Studio users can obtain version 0.7.76 via NuGet Packages
+Пользователи Visual Studio могут получить версию 0.7.76 через NuGet Packages
     https://www.nuget.org/packages/Bacon.js/0.7.76
 
 
-Intro
+Введение
 =====
 
-The idea of Functional Reactive Programming is quite well described by Conal Elliot at [Stack Overflow](http://stackoverflow.com/questions/1028250/what-is-functional-reactive-programming/1030631#1030631).
+Идея функционального реактивного программирования достаточно хорошо описанна Conal Elliot на [Stack Overflow](http://stackoverflow.com/questions/1028250/what-is-functional-reactive-programming/1030631#1030631).
 
-Bacon.js is a library for functional reactive programming. Or let's say it's a library for
-working with [events](#event) and dynamic values (which are called [Properties](#property) in Bacon.js).
+Bacon.js библиотека для функционального реактивного программирования. Или, скажем, что это библиотека чтобы работать с [events](#event) и динамическими значениями (которые называютя [Свойства](#property) в Bacon.js).
 
-Anyways, you can wrap an event source,
-say "mouse clicks on an element" into an [`EventStream`](#eventstream) by saying
+В любом случае, вы можете обернуть источник событий, сказав "mouse clicks on an element" в [`EventStream`](#eventstream) используя
 
 ```js
 var clicks = $("h1").asEventStream("click")
