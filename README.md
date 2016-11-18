@@ -110,45 +110,35 @@ Please contribute!
 
 Bacon.js библиотека для функционального реактивного программирования. Или, скажем, что это библиотека чтобы работать с [events](#event) и динамическими значениями (которые называютя [Свойства](#property) в Bacon.js).
 
-В любом случае, вы можете обернуть источник событий, сказав "mouse clicks on an element" в [`EventStream`](#eventstream) используя
+В любом случае, вы можете обернуть источник событий, сказав "mouse clicks on an element" в [`EventStream`](#eventstream) используя:
 
 ```js
 var clicks = $("h1").asEventStream("click")
 ```
-
-Each EventStream represents a stream of events. It is an Observable object, meaning
-that you can listen to events in the stream using, for instance, the [`onValue`](#stream-onvalue) method
-with a callback. Like this:
+Каждый EventStream является потоком событий. Это Наблюдаемый(Observable) объект, значит вы можете слушать события в потоке используя метод [`onValue`](#stream-onvalue) с колбеком. Например:
 
 ```js
 clicks.onValue(function() { alert("you clicked the h1 element") })
 ```
 
-But you can do neater stuff too. The Bacon of bacon.js is in that you can transform,
-filter and combine these streams in a multitude of ways (see API below). The methods [`map`](#observable-map),
-[`filter`](#observable-filter), for example, are similar to same functions in functional list programming
-(like [Underscore](http://underscorejs.org/)). So, if you say
+Но вы можете делать и другие аккуратные вещи тоже. Самая суть bacon.js то что вы можете трансформировать,
+фильтровать и объединять эти потоки множеством способов (см API ниже). Метод [`map`](#observable-map),
+[`filter`](#observable-filter), например, такие же как, в [Underscore](http://underscorejs.org/). 
 
 ```js
 var plus = $("#plus").asEventStream("click").map(1)
 var minus = $("#minus").asEventStream("click").map(-1)
 var both = plus.merge(minus)
 ```
-
-.. you'll have a stream that will output the number 1 when the "plus" button is clicked
-and another stream outputting -1 when the "minus" button is clicked. The `both` stream will
-be a merged stream containing events from both the plus and minus streams. This allows
-you to subscribe to both streams with one handler:
+... у вас будет поток, который выводит номер 1, когда кнопка "плюс" нажата, и другой поток с выводом -1, когда нажата кнопка "минус". `Both` - это объединенный поток, содержащий события из обоих plus и minus потоков. Это позволяет подписаться на оба потока с одним обработчиком:
 
 ```js
 both.onValue(function(val) { /* val will be 1 or -1 */ })
 ```
 
-In addition to EventStreams, bacon.js has a thing called [`Property`](#property), that is almost like an
-EventStream, but has a "current value". So things that change and have a current state are
-Properties, while things that consist of discrete events are EventStreams. You could think
-mouse clicks as an EventStream and mouse position as a Property. You can create Properties from
-an EventStream with [`scan`](#observable-scan) or [`toProperty`](#stream-toproperty) methods. So, let's say
+Дополнительно к EventStreams, bacon.js имеет штука называющиеся [`Свойства(Property)`](#property), это почти что
+EventStream, но имеет "текущее значение". Объекты которые могут меняться и иметь состояние это Свойства(Properties), а объекты которые состоят из событий - EventStreams. Например `mouse clicks` это EventStream и `mouse position` это Свойство(Property). Вы можете создавать Properties из EventStream с помощью метода [`scan`](#observable-scan) или [`toProperty`](#stream-toproperty). 
+Пример:
 
 ```js
 function add(x, y) { return x + y }
@@ -156,15 +146,11 @@ var counter = both.scan(0, add)
 counter.onValue(function(sum) { $("#sum").text(sum) })
 ```
 
-The `counter` property will contain the sum of the values in the `both` stream, so it's practically
-a counter that can be increased and decreased using the plus and minus buttons. The [`scan`](#observable-scan) method
-was used here to calculate the "current sum" of events in the `both` stream, by giving a "seed value"
-`0` and an "accumulator function" `add`. The scan method creates a property that starts with the given
-seed value and on each event in the source stream applies the accumulator function to the current
-property value and the new value from the stream.
+Свойство `Counter` будет содержать сумму значений в потоке ` both`, фактически это счетчик, который может быть увеличен и уменьшен с использованием кнопок плюс и минус.
 
-Properties can be very conveniently used for assigning values and attributes to DOM elements with JQuery.
-Here we assign the value of a property as the text of a span element whenever it changes:
+Метод [`scan`](#observable-scan) использовается чтобы вычислить "текущую сумму" событий в потоке `both`, который принимает начальное значение `0` и функцию аккумулятор `add`. Этот метод создает Property, которое начинается с заданного начального значения и на каждое событие в потоке применяет функцию аккумулятор к текущему значению Property.
+
+Property очень удобно использовать для присвоения значений и атрибутов DOM элементам. Например мы присваиваем значение свойства как текст элемента всякий раз, когда он меняется:
 
 ```js
 property.assign($("span"), "text")
