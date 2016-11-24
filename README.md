@@ -43,11 +43,11 @@ Please contribute!
 =================
 
 - [Bacon.js](#baconjs)
-- [Table of contents](#table-of-contents)
-- [Install](#install)
-- [Intro](#intro)
+- [Содержание](#table-of-contents)
+- [Установка](#install)
+- [Введение](#intro)
 - [API](#api)
-    - [Creating streams](#creating-streams)
+    - [Создание потоков](#creating-streams)
     - [Bacon.fromBinder for custom streams](#baconfrombinder-for-custom-streams)
     - [Common methods in EventStreams and Properties](#common-methods-in-eventstreams-and-properties)
     - [EventStream](#eventstream)
@@ -156,32 +156,27 @@ Property очень удобно использовать для присвое�
 property.assign($("span"), "text")
 ```
 
-Hiding and showing the same span depending on the content of the property value is equally straightforward
-
+Скрытие и отображение элемента также может зависеть от значения свойства. 
 ```js
 function hiddenForEmptyValue(value) { return value == "" ? "hidden" : "visible" }
 property.map(hiddenForEmptyValue).assign($("span"), "css", "visibility")
 ```
 
-In the example above a property value of "hello" would be mapped to "visible", which in turn would result in Bacon calling
-
+В примере значение свойства "hello" будет превращено в css-свойство "visible".
 ```js
 $("span").css("visibility", "visible")
 ```
 
-For an actual tutorial, please check out my [blog posts](http://nullzzz.blogspot.fi/2012/11/baconjs-tutorial-part-i-hacking-with.html)
+Дополнительный урок можете найти в [blog posts](http://nullzzz.blogspot.fi/2012/11/baconjs-tutorial-part-i-hacking-with.html)
 
 API
 ===
 
-Creating streams
+Создание потоков
 ----------------
 
 <a name="$-aseventstream"></a>
-[`$.asEventStream(eventName)`](#$-aseventstream "$.asEventStream(eventName : String)") creates an EventStream from events on a
-jQuery or Zepto.js object. You can pass optional arguments to add a
-jQuery live selector and/or a function that processes the jQuery
-event and its parameters, if given, like this:
+[`$.asEventStream(eventName)`](#$-aseventstream "$.asEventStream(eventName : String)") создание потока событий из объекта событий в jQuery или Zepto.js. Вы можете передать опциональные аргументы чтобы добавить jQuery селектор и/или функцию, которая обработает событие jQuery и его параметры, например:   
 
 ```js
 $("#my-div").asEventStream("click", ".more-specific-selector")
@@ -190,26 +185,24 @@ $("#my-div").asEventStream("click", function(event, args) { return args[0] })
 ```
 
 <a name="bacon-frompromise"></a>
-[`Bacon.fromPromise(promise [, abort] [, eventTransformer])`](#bacon-frompromise "Bacon.fromPromise(promise : Promise[A] [, abort : boolean][, eventTransformer]) : EventStream[A]") creates an EventStream from a Promise object such as JQuery Ajax.
-This stream will contain a single value or an error, followed immediately by stream end.
-You can use the optional abort flag (i.e. ´fromPromise(p, true)´ to have the `abort` method of the given promise be called when all subscribers have been removed from the created stream.
-You can also pass an optional function that transforms the promise value into Events. The default is to transform the value into `[new Bacon.Next(value), new Bacon.End()]`.
-Check out this [example](https://github.com/raimohanska/baconjs-examples/blob/master/resources/public/index.html).
+[`Bacon.fromPromise(promise [, abort] [, eventTransformer])`](#bacon-frompromise "Bacon.fromPromise(promise : Promise[A] [, abort : boolean][, eventTransformer]) : EventStream[A]") создает поток событий из промиса, например Ajax в jQuery.
+Этот поток будет иметь одно значение или ошибку сразу по окончаню потока.
+Вы можете использовать опциональный флаг ´fromPromise(p, true)´ чтобы иметь метод `abort` который будет вызван когда все подписчики будут удалены из созданного потока. 
+Также вы можете передать опциональную функцию, которая трансформирует значение промиса в событие. 
+Трансформации по умолчанию - `[new Bacon.Next(value), new Bacon.End()]`.
+Пример [example](https://github.com/raimohanska/baconjs-examples/blob/master/resources/public/index.html).
 
 <a name="bacon-fromevent"></a>
-[`Bacon.fromEvent(target, eventName [, eventTransformer])`](#bacon-fromevent "Bacon.fromEvent(target : EventTarget | EventEmitter, eventName : String [, eventTransformer]) : EventStream") creates an EventStream from events
-on a DOM EventTarget or Node.JS EventEmitter object, or an object that supports event listeners using `on`/`off` methods.
-You can also pass an optional function that transforms the emitted
-events' parameters.
+[`Bacon.fromEvent(target, eventName [, eventTransformer])`](#bacon-fromevent "Bacon.fromEvent(target : EventTarget | EventEmitter, eventName : String [, eventTransformer]) : EventStream") создает поток событий из DOM или Node.JS объекта событий, или из объекта который поддерживает слушателей событий используюя методы `on`/`off`.
+Также вы можете передать опциональную функцию которая трансформирует параметр события.
 
 ```js
 Bacon.fromEvent(document.body, "click").onValue(function() { alert("Bacon!") })
 ```
 
 <a name="bacon-fromcallback"></a>
-[`Bacon.fromCallback(f [, args...])`](#bacon-fromcallback "Bacon.fromCallback(f : (A -> void) -> void [, args...]) : EventStream[A]") creates an EventStream from a function that
-accepts a callback. The function is supposed to call its callback just
-once. For example:
+[`Bacon.fromCallback(f [, args...])`](#bacon-fromcallback "Bacon.fromCallback(f : (A -> void) -> void [, args...]) : EventStream[A]") создает поток событий из функции которая принимает колбек. Функция может вызвать колбек только однажды.
+Например:
 
 ```js
 Bacon.fromCallback(function(callback) {
@@ -219,13 +212,10 @@ Bacon.fromCallback(function(callback) {
 })
 ```
 
-This would create a stream that outputs a single value "Bacon!" and ends
-after that. The use of setTimeout causes the value to be delayed by 1
-second.
+Это создает поток который выведет одинокое значение "Bacon!" и после этого закончится.
+Использование метода setTimeout создаст задержку в 1 секунду.
 
-You can also give any number of arguments to [`fromCallback`](#bacon-fromcallback), which will be
-passed to the function. These arguments can be simple variables, Bacon
-EventStreams or Properties. For example the following will output "Bacon rules":
+Вы можете передать любые параметры в [`fromCallback`](#bacon-fromcallback). Эти переменные могут быть переменными, EventStreams или Properties. Например:
 
 ```js
 bacon = Bacon.constant('bacon')
@@ -235,12 +225,12 @@ Bacon.fromCallback(function(a, b, callback) {
 ```
 
 <a name="bacon-fromcallback-object"></a>
-[`Bacon.fromCallback(object, methodName [, args...])`](#bacon-fromcallback-object "Bacon.fromCallback(object, methodName [, args...]) : EventStream[A]") a variant of fromCallback which calls the named method of a given object.
+[`Bacon.fromCallback(object, methodName [, args...])`](#bacon-fromcallback-object "Bacon.fromCallback(object, methodName [, args...]) : EventStream[A]") пример fromCallback который вызовет заданный метод переданного объекта.
 
 <a name="bacon-fromnodecallback"></a>
-[`Bacon.fromNodeCallback(f [, args...])`](#bacon-fromnodecallback "Bacon.fromNodeCallback(f : (E -> A -> void) -> void [, args...]) : EventStream[A]") behaves the same way as [`Bacon.fromCallback`](#bacon-fromcallback),
-except that it expects the callback to be called in the Node.js convention:
-`callback(error, data)`, where error is null if everything is fine. For example:
+[`Bacon.fromNodeCallback(f [, args...])`](#bacon-fromnodecallback "Bacon.fromNodeCallback(f : (E -> A -> void) -> void [, args...]) : EventStream[A]") тоже самое что [`Bacon.fromCallback`](#bacon-fromcallback),
+исключая то, что он ожидает что колбек будет вызван в соглашении Node.js:
+`callback(error, data)`, когда error имеет значение null если все хорошо. Пример:
 
 ```js
 var Bacon = require('baconjs').Bacon,
@@ -251,51 +241,36 @@ read.onValue(function(value) { console.log("Read contents: " + value); });
 ```
 
 <a name="bacon-fromnodecallback-object"></a>
-[`Bacon.fromNodeCallback(object, methodName [, args...])`](#bacon-fromnodecallback-object "Bacon.fromNodeCallback(object, methodName [, args...])") a variant of fromNodeCallback which calls the named method of a given object.
+[`Bacon.fromNodeCallback(object, methodName [, args...])`](#bacon-fromnodecallback-object "Bacon.fromNodeCallback(object, methodName [, args...])") пример fromNodeCallback который вызовет заданный метод переданного объекта.
 
 <a name="bacon-frompoll"></a>
-[`Bacon.fromPoll(interval, f)`](#bacon-frompoll "Bacon.fromPoll(interval : Number, f : -> Event[A]) : EventStream[A]") polls given function with given interval.
-Function should return Events: either [`Bacon.Next`](#bacon-next) or [`Bacon.End`](#bacon-end). Polling occurs only
-when there are subscribers to the stream. Polling ends permanently when
-`f` returns [`Bacon.End`](#bacon-end).
+[`Bacon.fromPoll(interval, f)`](#bacon-frompoll "Bacon.fromPoll(interval : Number, f : -> Event[A]) : EventStream[A]") вызывает переданную функцю с заданным интервалом.
+Функция должна вернуть событие: например [`Bacon.Next`](#bacon-next) или [`Bacon.End`](#bacon-end). Вызыв произойдет только если есть подписчики у потока. Вызыв остановится когда `f` вернет [`Bacon.End`](#bacon-end).
 
 <a name="bacon-once"></a>
-[`Bacon.once(value)`](#bacon-once "Bacon.once(value : Event[A] | A) : EventStream[A]") creates an EventStream that delivers the given
-single value for the first subscriber. The stream will end immediately
-after this value. You can also send an [`Bacon.Error`](#bacon-error) event instead of a
-value: `Bacon.once(new Bacon.Error("fail"))`.
+[`Bacon.once(value)`](#bacon-once "Bacon.once(value : Event[A] | A) : EventStream[A]") создает поток событий который единожды передаст полученный объект первому подписчику. Вы можете передать [`Bacon.Error`](#bacon-error) вместо значения: `Bacon.once(new Bacon.Error("fail"))`.
 
 <a name="bacon-fromarray"></a>
-[`Bacon.fromArray(values)`](#bacon-fromarray "Bacon.fromArray(values : Array[Event[A] | A]) : EventStream[A]") creates an EventStream that delivers the given
-series of values (given as array) to the first subscriber. The stream ends after these
-values have been delivered. You can also send [`Bacon.Error`](#bacon-error) events, or
-any combination of pure values and error events like this:
-`Bacon.fromArray([1, new Bacon.Error()])
+[`Bacon.fromArray(values)`](#bacon-fromarray "Bacon.fromArray(values : Array[Event[A] | A]) : EventStream[A]") создает поток событий который передает значение из переданного массива значений первому подписчику. Поток закончится когда все значения будут переданны. Также вы можете передать [`Bacon.Error`](#bacon-error) или любую комбинацию из значений и ошибки:
+`Bacon.fromArray([1, new Bacon.Error()])`
 
 <a name="bacon-interval"></a>
-[`Bacon.interval(interval, value)`](#bacon-interval "Bacon.interval(interval : Number, value : A) : EventStream[A]") repeats the single element
-indefinitely with the given interval (in milliseconds)
+[`Bacon.interval(interval, value)`](#bacon-interval "Bacon.interval(interval : Number, value : A) : EventStream[A]") повторит поток из переданного элемента бесконечно с переданным интервалом.
 
 <a name="bacon-sequentially"></a>
-[`Bacon.sequentially(interval, values)`](#bacon-sequentially "Bacon.sequentially(interval : Number, values : Array[A]) : EventStream[A]") creates a stream containing given
-values (given as array). Delivered with given interval in milliseconds.
+[`Bacon.sequentially(interval, values)`](#bacon-sequentially "Bacon.sequentially(interval : Number, values : Array[A]) : EventStream[A]") создает поток событий который передает значение из переданного массива значений с переданным интервалом в миллисекундах.
 
 <a name="bacon-repeatedly"></a>
-[`Bacon.repeatedly(interval, values)`](#bacon-repeatedly "Bacon.repeatedly(interval : Number, values : Array[A]) : EventStream[A]") repeats given elements indefinitely
-with given interval in milliseconds. For example, `repeatedly(10, [1,2,3])`
-would lead to `1,2,3,1,2,3...` to be repeated indefinitely.
+[`Bacon.repeatedly(interval, values)`](#bacon-repeatedly "Bacon.repeatedly(interval : Number, values : Array[A]) : EventStream[A]") повтаряет переданные эллементы бесконечно с переданным интервалом. Например `repeatedly(10, [1,2,3])`
+выведет `1,2,3,1,2,3...` бесконечно.
 
 <a name="bacon-repeat"></a>
-[`Bacon.repeat(fn)`](#bacon-repeat "Bacon.repeat(fn: Number -> Observable[A]): EventStream[A]") Calls generator function which is expected to return an observable. The returned EventStream contains
-values and errors from the spawned observable. When the spawned observable ends, the generator is called
-again to spawn a new observable.
+[`Bacon.repeat(fn)`](#bacon-repeat "Bacon.repeat(fn: Number -> Observable[A]): EventStream[A]") Вызовет функцию генератор которая ожидается вернет наблюдателя. Поток событий будет иметь значения или ошибки возвращенные наблюдателем. Когда наблюдатель закончится, генератор запустится опять для пораждения нового наблюдателя.
 
-This is repeated until the generator returns a falsy value
-(such as `undefined` or `false`).
+Это будет повторяться бесконечно пока генерато не вернет ложное значение (например `undefined` или `false`).
+Функция генератор вызовется с одним аргументом - номером итератора начиная с `0`.
 
-The generator function is called with one argument — iteration number starting from `0`.
-
-Here's an example:
+Например:
 
 ```js
 Bacon.repeat(function(i) {
@@ -307,30 +282,25 @@ Bacon.repeat(function(i) {
 }).log()
 ```
 
-The example will produce values 0, 1 and 2.
+Пример произведет значения 0, 1 и 2.
 
 <a name="bacon-never"></a>
-[`Bacon.never()`](#bacon-never "Bacon.never() : EventStream") creates an EventStream that immediately ends.
+[`Bacon.never()`](#bacon-never "Bacon.never() : EventStream") Создаст поток событий который сразу закончится.
 
 <a name="bacon-later"></a>
-[`Bacon.later(delay, value)`](#bacon-later "Bacon.later(delay : Number, value : A) : EventStream[A]") creates a single-element stream that
-produces given value after given delay (milliseconds).
+[`Bacon.later(delay, value)`](#bacon-later "Bacon.later(delay : Number, value : A) : EventStream[A]") создаст один поток событий через заданное время.
 
 <a name="new-bacon-eventstream"></a>
-[`new Bacon.EventStream(subscribe)`](#new-bacon-eventstream "new Bacon.EventStream(subscribe)") creates an [`EventStream`](#eventstream) with the given subscribe function.
+[`new Bacon.EventStream(subscribe)`](#new-bacon-eventstream "new Bacon.EventStream(subscribe)") создаст [`EventStream`](#eventstream) с переданной функцией для подписки.
 
-[`property.changes`](#property-changes) creates a stream of changes to the [`Property`](#property). The stream *does not* include
-an event for the current value of the Property at the time this method was called.
+[`property.changes`](#property-changes) создаст поток изменений [`Property`](#property). Поток *не будет* включать в себя событие для текущего значения свойства во время вызова метода.(чё?!)
 
 <a name="property-toeventstream"></a>
-[`property.toEventStream()`](#property-toeventstream "property.toEventStream(@ : Property[A]) : EventStream[A]") creates an EventStream based on this Property. The stream contains also an event for the current
-value of this Property at the time this method was called.
+[`property.toEventStream()`](#property-toeventstream "property.toEventStream(@ : Property[A]) : EventStream[A]") создаст поток событий из свойства. Поток также будет содержать событие для текущего значения свойства во время вызова этого метода.
 
-[`new Bacon.Bus()`](#new-bacon-bus) creates a pushable/pluggable stream (see [Bus](#bus) section below)
+[`new Bacon.Bus()`](#new-bacon-bus) создаст pushable/pluggable поток (см [Bus](#bus) ниже)
 
-Pro tip: you can also put Errors into streams created with the
-constructors above, by using an [`Bacon.Error`](#bacon-error) object instead of a plain
-value.
+Подсказки и советы: вы можете также передать событие в поток используя объект [`Bacon.Error`](#bacon-error).
 
 Bacon.fromBinder for custom streams
 -----------------------------------
